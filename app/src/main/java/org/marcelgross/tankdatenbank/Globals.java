@@ -5,4 +5,6 @@ package org.marcelgross.tankdatenbank;
  */
 public interface Globals {
     String PREFERENCE_VEHICLE = "currentVehicle";
+    String VEHICLE_NAME = "vehicleName";
+    String VEHICLE_ID = "vehicleID";
 }

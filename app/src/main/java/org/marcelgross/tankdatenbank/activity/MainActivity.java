@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_new_vehicles:
-                    Intent intent = new Intent(MainActivity.this, NewVehicleActivity.class);
+                    Intent intent = new Intent(MainActivity.this, EditVehicleActivity.class);
                     startActivityForResult(intent, 1);
                     break;
                 default:

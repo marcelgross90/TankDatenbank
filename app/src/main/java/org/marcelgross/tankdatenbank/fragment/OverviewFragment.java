@@ -1,31 +1,84 @@
 package org.marcelgross.tankdatenbank.fragment;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import org.marcelgross.tankdatenbank.Globals;
 import org.marcelgross.tankdatenbank.R;
+import org.marcelgross.tankdatenbank.activity.EditEntryActivity;
+import org.marcelgross.tankdatenbank.activity.EditVehicleActivity;
+import org.marcelgross.tankdatenbank.database.EntryDBHelper;
 import org.marcelgross.tankdatenbank.database.VehicleDBHelper;
+import org.marcelgross.tankdatenbank.entity.Entry;
 import org.marcelgross.tankdatenbank.entity.Vehicle;
+import org.marcelgross.tankdatenbank.util.Round;
+
+import java.util.List;
 
 public class OverviewFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private View view;
+    //at least one vehicle exists
+    private LinearLayout vehicle;
+    private FloatingActionButton fab;
+    private Button statistic;
+    private TextView total_driven;
+    private TextView total_liter;
+    private TextView total_prize;
+    private TextView average_prize;
+    //no vehicle exists
+    private LinearLayout noVehicle;
+    private Button newCar;
     private VehicleDBHelper vehicleDBHelper;
+    private EntryDBHelper entryDBHelper;
+    private Vehicle currentVehilce;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_overview, container, false);
         vehicleDBHelper = VehicleDBHelper.getInstance(getActivity());
-
+        entryDBHelper = EntryDBHelper.getInstance(getActivity());
         loadVehicle(loadPreferences());
+
+        vehicle = (LinearLayout) view.findViewById(R.id.vehicle);
+        noVehicle = (LinearLayout) view.findViewById(R.id.noVehicle);
+
+        setUpView();
+
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.edit_menu, menu);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_edit:
+                Intent intent = new Intent(getActivity(), EditVehicleActivity.class);
+                intent.putExtra(Globals.VEHICLE_NAME, currentVehilce.getName());
+                getActivity().startActivity(intent);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -40,6 +93,10 @@ public class OverviewFragment extends Fragment implements SharedPreferences.OnSh
         super.onResume();
         PreferenceManager.getDefaultSharedPreferences(getContext())
                 .registerOnSharedPreferenceChangeListener(this);
+
+        if (currentVehilce != null) {
+            setHasOptionsMenu(true);
+        }
     }
 
     @Override
@@ -47,16 +104,88 @@ public class OverviewFragment extends Fragment implements SharedPreferences.OnSh
 
         String currentVehicle = sharedPreferences.getString(Globals.PREFERENCE_VEHICLE, "");
         loadVehicle(currentVehicle);
+        setUpView();
+    }
+
+    private void setUpView() {
+        if (currentVehilce == null) {
+            noVehicle.setVisibility(View.VISIBLE);
+            vehicle.setVisibility(View.GONE);
+            setUpInitialView();
+        }  else {
+            noVehicle.setVisibility(View.GONE);
+            vehicle.setVisibility(View.VISIBLE);
+            setUpStandardView();
+            calulate();
+        }
+    }
+
+    private void setUpInitialView() {
+        newCar = (Button) view.findViewById(R.id.newVehicle);
+        newCar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), EditVehicleActivity.class);
+                startActivityForResult(intent, 1);
+            }
+        });
+    }
+
+    private void setUpStandardView() {
+        fab = (FloatingActionButton) view.findViewById(R.id.fab);
+        statistic = (Button) view.findViewById(R.id.statistic);
+        total_driven = (TextView) view.findViewById(R.id.total_milage_driven);
+        total_liter = (TextView) view.findViewById(R.id.total_liter);
+        total_prize = (TextView) view.findViewById(R.id.total_paid);
+        average_prize = (TextView) view.findViewById(R.id.average_prize);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (currentVehilce != null)
+                    openNewInput();
+                else
+                    Toast.makeText(getActivity(), R.string.no_vehicle_choosen, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void openNewInput() {
+        Intent intent = new Intent(getActivity(), EditEntryActivity.class);
+        intent.putExtra(Globals.VEHICLE_ID, currentVehilce.getId());
+        getActivity().startActivity(intent);
     }
 
     private void loadVehicle(String vehicleName) {
-        Vehicle vehicle = vehicleDBHelper.readVehicleByName(vehicleName);
-        if (vehicle != null)
-            getActivity().setTitle(vehicle.getName());
+        currentVehilce = vehicleDBHelper.readVehicleByName(vehicleName);
+        if (currentVehilce != null)
+            getActivity().setTitle(currentVehilce.getName());
+    }
+
+    private void calulate() {
+        List<Entry> entries = entryDBHelper.readAllEntriesByVehicleID(currentVehilce.getId());
+        int maxMilage = -1;
+        double totalLiter = 0;
+        double totalPrize = 0;
+
+        for (Entry currentEntry : entries) {
+            if (maxMilage < currentEntry.getMilage())
+                maxMilage = currentEntry.getMilage();
+            totalLiter += currentEntry.getLiter();
+            totalPrize += (currentEntry.getLiter() * currentEntry.getPrice_liter());
+        }
+        double prizeAverage = totalPrize / totalLiter;
+        int milageDriven = maxMilage - Integer.parseInt(String.valueOf(currentVehilce.getMilage()));
+        if (milageDriven < 0)
+            milageDriven = 0;
+        total_driven.setText(getString(R.string.total_milage_driven, milageDriven));
+        total_liter.setText(getString(R.string.total_liter, Round.roudToString(totalLiter)));
+        total_prize.setText(getString(R.string.total_price_paid, Round.roudToString(totalPrize)));
+        average_prize.setText(getString(R.string.average_price, Round.roudToString(prizeAverage)));
     }
 
     private String loadPreferences() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        return sharedPreferences.getString(Globals.PREFERENCE_VEHICLE, "" );
+        return sharedPreferences.getString(Globals.PREFERENCE_VEHICLE, "");
     }
 }
