@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Tank Datenbank</string>
+    <string name="drawer_open">Öffnen</string>
+    <string name="drawer_close">Schließen</string>
+    <string name="new_vehicle">Neues Fahrzeug</string>
+    <string name="my_vehicles">Meine Fahrzeuge</string>
+    <string name="save">Speichern</string>
+    <string name="vehicleName">Fahrzeug Name</string>
+    <string name="milage">Kilometerstand</string>
+    <string name="invalidInputs">Ungültie Eingaben</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
