@@ -5,8 +5,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 
-import org.marcelgross.tankdatenbank.entity.Entry;
-
 /**
  * Created by Marcel on 06.02.2016.
  */

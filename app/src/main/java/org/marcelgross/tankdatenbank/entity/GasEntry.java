@@ -1,6 +1,6 @@
 package org.marcelgross.tankdatenbank.entity;
 
-public class Entry {
+public class GasEntry {
 
     private int id;
     private String gasstation;
@@ -12,10 +12,10 @@ public class Entry {
     private int milage;
     private int vehicleID;
 
-    public Entry() {
+    public GasEntry() {
     }
 
-    public Entry(String gasstation, int day, int month, int year, double liter, double price_liter, int milage, int vehicleID) {
+    public GasEntry(String gasstation, int day, int month, int year, double liter, double price_liter, int milage, int vehicleID) {
         this.gasstation = gasstation;
         this.day = day;
         this.month = month;
@@ -26,7 +26,7 @@ public class Entry {
         this.vehicleID = vehicleID;
     }
 
-    public Entry(int id, String gasstation, int day, int month, int year, double liter, double price_liter, int milage, int vehicleID) {
+    public GasEntry(int id, String gasstation, int day, int month, int year, double liter, double price_liter, int milage, int vehicleID) {
         this.id = id;
         this.gasstation = gasstation;
         this.day = day;

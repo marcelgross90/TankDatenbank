@@ -18,8 +18,7 @@ import android.widget.Toast;
 import org.marcelgross.tankdatenbank.Globals;
 import org.marcelgross.tankdatenbank.R;
 import org.marcelgross.tankdatenbank.database.EntryDBHelper;
-import org.marcelgross.tankdatenbank.entity.Entry;
-import org.marcelgross.tankdatenbank.entity.Vehicle;
+import org.marcelgross.tankdatenbank.entity.GasEntry;
 
 import java.util.Calendar;
 
@@ -140,8 +139,8 @@ public class EditEntryActivity extends AppCompatActivity implements View.OnClick
                 !dateSelected) {
             Toast.makeText(EditEntryActivity.this, R.string.invalid_inputs, Toast.LENGTH_LONG).show();
         } else {
-            Entry entry = new Entry(gasstation_input, day, month, year, liter_input, prize_liter_input, milage_input, vehicleId);
-            entryDBHelper.createOrUpdate(entry);
+            GasEntry gasEntry = new GasEntry(gasstation_input, day, month, year, liter_input, prize_liter_input, milage_input, vehicleId);
+            entryDBHelper.createOrUpdate(gasEntry);
             onBackPressed();
         }
     }

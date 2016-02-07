@@ -3,7 +3,7 @@ package org.marcelgross.tankdatenbank.database;
 import android.content.ContentValues;
 import android.content.Context;
 
-import org.marcelgross.tankdatenbank.entity.Entry;
+import org.marcelgross.tankdatenbank.entity.GasEntry;
 
 import java.util.List;
 
@@ -22,31 +22,31 @@ public class EntryDBHelper {
         return instance;
     }
 
-    public Entry readEntry( int id ) {
+    public GasEntry readEntry( int id ) {
         String selection = EntryDAO.EntryEntry._ID + " = ?";
         String[] selectionArgs = {String.valueOf(id)};
 
-        List<Entry> entries = entryDAO.read( selection, selectionArgs );
+        List<GasEntry> entries = entryDAO.read( selection, selectionArgs );
 
         return entries.size() == 0 ? null : entries.get( 0 );
     }
 
-    public List<Entry> readAllEntries() {
+    public List<GasEntry> readAllEntries() {
         return entryDAO.read( null, null );
     }
 
-    public List<Entry> readAllEntriesByVehicleID(int id) {
+    public List<GasEntry> readAllEntriesByVehicleID(int id) {
         String selection = EntryDAO.EntryEntry.COLUMN_ENTRY_VEHICLE_ID + " = ?";
         String[] selectionArgs = {String.valueOf(id)};
         return entryDAO.read( selection, selectionArgs );
     }
 
-    public void createOrUpdate( Entry entry ) {
-        Entry existingEntry = readEntry(entry.getId());
-        if( existingEntry != null ) {
-            updatEntry(entry);
+    public void createOrUpdate( GasEntry gasEntry) {
+        GasEntry existingGasEntry = readEntry(gasEntry.getId());
+        if( existingGasEntry != null ) {
+            updatEntry(gasEntry);
         } else {
-            createNewEntry(entry);
+            createNewEntry(gasEntry);
         }
     }
 
@@ -54,23 +54,23 @@ public class EntryDBHelper {
         this.entryDAO = EntryDAO.getInstance( context );
     }
 
-    private int updatEntry(Entry entry) {
+    private int updatEntry(GasEntry gasEntry) {
         ContentValues values = new ContentValues();
-        values.put(BaseDAO.EntryEntry.COLUMN_ENTRY_GASSTATION, entry.getGasstation());
-        values.put(BaseDAO.EntryEntry.COLUMN_ENTRY_DAY, entry.getDay());
-        values.put(BaseDAO.EntryEntry.COLUMN_ENTRY_MONTH, entry.getMonth());
-        values.put(BaseDAO.EntryEntry.COLUMN_ENTRY_YEAR, entry.getYear());
-        values.put(BaseDAO.EntryEntry.COLUMN_ENTRY_LITER, entry.getLiter());
-        values.put(BaseDAO.EntryEntry.COLUMN_ENTRY_PRICE_LITER, entry.getPrice_liter());
-        values.put(BaseDAO.EntryEntry.COLUMN_ENTRY_MILAGE, entry.getMilage());
-        values.put(BaseDAO.EntryEntry.COLUMN_ENTRY_VEHICLE_ID, entry.getVehicleID());
+        values.put(BaseDAO.EntryEntry.COLUMN_ENTRY_GASSTATION, gasEntry.getGasstation());
+        values.put(BaseDAO.EntryEntry.COLUMN_ENTRY_DAY, gasEntry.getDay());
+        values.put(BaseDAO.EntryEntry.COLUMN_ENTRY_MONTH, gasEntry.getMonth());
+        values.put(BaseDAO.EntryEntry.COLUMN_ENTRY_YEAR, gasEntry.getYear());
+        values.put(BaseDAO.EntryEntry.COLUMN_ENTRY_LITER, gasEntry.getLiter());
+        values.put(BaseDAO.EntryEntry.COLUMN_ENTRY_PRICE_LITER, gasEntry.getPrice_liter());
+        values.put(BaseDAO.EntryEntry.COLUMN_ENTRY_MILAGE, gasEntry.getMilage());
+        values.put(BaseDAO.EntryEntry.COLUMN_ENTRY_VEHICLE_ID, gasEntry.getVehicleID());
         String selection = BaseDAO.EntryEntry._ID + " LIKE ?";
-        String[] where = {String.valueOf(entry.getId())};
+        String[] where = {String.valueOf(gasEntry.getId())};
 
         return entryDAO.update( values, selection, where );
     }
 
-    private long createNewEntry(Entry entry) {
-        return entryDAO.create( entry );
+    private long createNewEntry(GasEntry gasEntry) {
+        return entryDAO.create(gasEntry);
     }
 }

@@ -17,16 +17,22 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+
 import org.marcelgross.tankdatenbank.Globals;
 import org.marcelgross.tankdatenbank.R;
 import org.marcelgross.tankdatenbank.activity.EditEntryActivity;
 import org.marcelgross.tankdatenbank.activity.EditVehicleActivity;
 import org.marcelgross.tankdatenbank.database.EntryDBHelper;
 import org.marcelgross.tankdatenbank.database.VehicleDBHelper;
-import org.marcelgross.tankdatenbank.entity.Entry;
+import org.marcelgross.tankdatenbank.entity.GasEntry;
 import org.marcelgross.tankdatenbank.entity.Vehicle;
 import org.marcelgross.tankdatenbank.util.Round;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class OverviewFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -117,6 +123,7 @@ public class OverviewFragment extends Fragment implements SharedPreferences.OnSh
             vehicle.setVisibility(View.VISIBLE);
             setUpStandardView();
             calulate();
+            setUpChart();
         }
     }
 
@@ -163,16 +170,16 @@ public class OverviewFragment extends Fragment implements SharedPreferences.OnSh
     }
 
     private void calulate() {
-        List<Entry> entries = entryDBHelper.readAllEntriesByVehicleID(currentVehilce.getId());
+        List<GasEntry> entries = entryDBHelper.readAllEntriesByVehicleID(currentVehilce.getId());
         int maxMilage = -1;
         double totalLiter = 0;
         double totalPrize = 0;
 
-        for (Entry currentEntry : entries) {
-            if (maxMilage < currentEntry.getMilage())
-                maxMilage = currentEntry.getMilage();
-            totalLiter += currentEntry.getLiter();
-            totalPrize += (currentEntry.getLiter() * currentEntry.getPrice_liter());
+        for (GasEntry currentGasEntry : entries) {
+            if (maxMilage < currentGasEntry.getMilage())
+                maxMilage = currentGasEntry.getMilage();
+            totalLiter += currentGasEntry.getLiter();
+            totalPrize += (currentGasEntry.getLiter() * currentGasEntry.getPrice_liter());
         }
         double prizeAverage = totalPrize / totalLiter;
         int milageDriven = maxMilage - Integer.parseInt(String.valueOf(currentVehilce.getMilage()));
@@ -182,6 +189,34 @@ public class OverviewFragment extends Fragment implements SharedPreferences.OnSh
         total_liter.setText(getString(R.string.total_liter, Round.roudToString(totalLiter)));
         total_prize.setText(getString(R.string.total_price_paid, Round.roudToString(totalPrize)));
         average_prize.setText(getString(R.string.average_price, Round.roudToString(prizeAverage)));
+    }
+
+    private void setUpChart(){
+        LineChart lineChart = (LineChart) view.findViewById(R.id.chart);
+        // creating list of entry
+        ArrayList<Entry> entries = new ArrayList<>();
+        entries.add(new Entry(4f, 0));
+        entries.add(new Entry(8f, 1));
+        entries.add(new Entry(6f, 2));
+        entries.add(new Entry(2f, 3));
+        entries.add(new Entry(18f, 4));
+        entries.add(new Entry(9f, 5));
+
+        LineDataSet dataset = new LineDataSet(entries, "# of Calls");
+        dataset.setDrawFilled(true);
+      //  dataset.setDrawCubic(true);
+
+        ArrayList<String> labels = new ArrayList<>();
+        labels.add("January");
+        labels.add("February");
+        labels.add("March");
+        labels.add("April");
+        labels.add("May");
+        labels.add("June");
+
+        LineData data = new LineData(labels, dataset);
+        lineChart.setData(data);
+        lineChart.setDescription("Description");
     }
 
     private String loadPreferences() {

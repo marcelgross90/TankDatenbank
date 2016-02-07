@@ -4,7 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
-import org.marcelgross.tankdatenbank.entity.Entry;
+import org.marcelgross.tankdatenbank.entity.GasEntry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,16 +23,16 @@ public class EntryDAO extends BaseDAO {
         return instance;
     }
 
-    public long create(Entry entry) {
+    public long create(GasEntry gasEntry) {
         ContentValues values = new ContentValues();
-        values.put(EntryEntry.COLUMN_ENTRY_GASSTATION, entry.getGasstation());
-        values.put(EntryEntry.COLUMN_ENTRY_DAY, entry.getDay());
-        values.put(EntryEntry.COLUMN_ENTRY_MONTH, entry.getMonth());
-        values.put(EntryEntry.COLUMN_ENTRY_YEAR, entry.getYear());
-        values.put(EntryEntry.COLUMN_ENTRY_LITER, entry.getLiter());
-        values.put(EntryEntry.COLUMN_ENTRY_PRICE_LITER, entry.getPrice_liter());
-        values.put(EntryEntry.COLUMN_ENTRY_MILAGE, entry.getMilage());
-        values.put(EntryEntry.COLUMN_ENTRY_VEHICLE_ID, entry.getVehicleID());
+        values.put(EntryEntry.COLUMN_ENTRY_GASSTATION, gasEntry.getGasstation());
+        values.put(EntryEntry.COLUMN_ENTRY_DAY, gasEntry.getDay());
+        values.put(EntryEntry.COLUMN_ENTRY_MONTH, gasEntry.getMonth());
+        values.put(EntryEntry.COLUMN_ENTRY_YEAR, gasEntry.getYear());
+        values.put(EntryEntry.COLUMN_ENTRY_LITER, gasEntry.getLiter());
+        values.put(EntryEntry.COLUMN_ENTRY_PRICE_LITER, gasEntry.getPrice_liter());
+        values.put(EntryEntry.COLUMN_ENTRY_MILAGE, gasEntry.getMilage());
+        values.put(EntryEntry.COLUMN_ENTRY_VEHICLE_ID, gasEntry.getVehicleID());
 
         return writeDb.insert(EntryEntry.TABLE_NAME, null, values);
     }
@@ -41,8 +41,8 @@ public class EntryDAO extends BaseDAO {
         return writeDb.update(EntryEntry.TABLE_NAME, values, selection, selectionArgs);
     }
 
-    public List<Entry> read(String selection, String[] selectionArgs) {
-        List<Entry> entries = new ArrayList<>();
+    public List<GasEntry> read(String selection, String[] selectionArgs) {
+        List<GasEntry> entries = new ArrayList<>();
 
         String[] projection = {
                 EntryEntry._ID,
@@ -68,26 +68,26 @@ public class EntryDAO extends BaseDAO {
 
         if (c.moveToFirst()) {
             do {
-                Entry currentEntry = new Entry();
-                currentEntry.setId(
+                GasEntry currentGasEntry = new GasEntry();
+                currentGasEntry.setId(
                         c.getInt(c.getColumnIndexOrThrow(EntryEntry._ID)));
-                currentEntry.setGasstation(
+                currentGasEntry.setGasstation(
                         c.getString(c.getColumnIndexOrThrow(EntryEntry.COLUMN_ENTRY_GASSTATION)));
-                currentEntry.setDay(
+                currentGasEntry.setDay(
                         c.getInt(c.getColumnIndexOrThrow(EntryEntry.COLUMN_ENTRY_DAY)));
-                currentEntry.setMonth(
+                currentGasEntry.setMonth(
                         c.getInt(c.getColumnIndexOrThrow(EntryEntry.COLUMN_ENTRY_MONTH)));
-                currentEntry.setYear(
+                currentGasEntry.setYear(
                         c.getInt(c.getColumnIndexOrThrow(EntryEntry.COLUMN_ENTRY_YEAR)));
-                currentEntry.setLiter(
+                currentGasEntry.setLiter(
                         c.getDouble(c.getColumnIndexOrThrow(EntryEntry.COLUMN_ENTRY_LITER)));
-                currentEntry.setPrice_liter(
+                currentGasEntry.setPrice_liter(
                         c.getDouble(c.getColumnIndexOrThrow(EntryEntry.COLUMN_ENTRY_PRICE_LITER)));
-                currentEntry.setMilage(
+                currentGasEntry.setMilage(
                         c.getInt(c.getColumnIndexOrThrow(EntryEntry.COLUMN_ENTRY_MILAGE)));
-                currentEntry.setVehicleID(
+                currentGasEntry.setVehicleID(
                         c.getInt(c.getColumnIndexOrThrow(EntryEntry.COLUMN_ENTRY_VEHICLE_ID)));
-                entries.add(currentEntry);
+                entries.add(currentGasEntry);
             } while (c.moveToNext());
         }
         c.close();
