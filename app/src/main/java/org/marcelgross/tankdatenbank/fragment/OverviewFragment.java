@@ -13,14 +13,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 
@@ -45,24 +43,21 @@ public class OverviewFragment extends Fragment {
 
     private View view;
     //at least one vehicle exists
-    private LinearLayout vehicle;
-    private FloatingActionButton fab;
-    private Button statistic;
+    private RelativeLayout vehicle;
     private TextView total_driven;
     private TextView total_liter;
     private TextView total_prize;
     private TextView average_prize;
     //no vehicle exists
     private LinearLayout noVehicle;
-    private Button newCar;
 
     private VehicleDBHelper vehicleDBHelper;
     private EntryDBHelper entryDBHelper;
     private Vehicle currentVehicle;
     private List<GasEntry> entries;
 
-    public static OverviewFragment getInstance(int id) {
-        Bundle bundle = new Bundle(  );
+    public static OverviewFragment getInstance( int id ) {
+        Bundle bundle = new Bundle();
         bundle.putInt( Globals.VEHICLE_ID, id );
         OverviewFragment fragment = new OverviewFragment();
         fragment.setArguments( bundle );
@@ -70,19 +65,18 @@ public class OverviewFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView( LayoutInflater inflater, ViewGroup container,
+                              Bundle savedInstanceState ) {
         view = inflater.inflate( R.layout.fragment_overview, container, false );
         vehicleDBHelper = VehicleDBHelper.getInstance( getActivity() );
         entryDBHelper = EntryDBHelper.getInstance( getActivity() );
 
         Bundle bundle = getArguments();
         if( bundle != null )
-            loadVehicle(bundle.getInt( Globals.VEHICLE_ID ));
+            loadVehicle( bundle.getInt( Globals.VEHICLE_ID ) );
 
-
-        vehicle = (LinearLayout) view.findViewById(R.id.vehicle);
-        noVehicle = (LinearLayout) view.findViewById(R.id.noVehicle);
+        vehicle = (RelativeLayout) view.findViewById( R.id.vehicle );
+        noVehicle = (LinearLayout) view.findViewById( R.id.noVehicle );
 
         setUpView();
 
@@ -90,21 +84,21 @@ public class OverviewFragment extends Fragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu( Menu menu, MenuInflater inflater ) {
         inflater.inflate( R.menu.edit_menu, menu );
 
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+    public boolean onOptionsItemSelected( MenuItem item ) {
+        switch ( item.getItemId() ) {
             case R.id.action_edit:
-                Intent intent = new Intent(getActivity(), EditVehicleActivity.class);
-                intent.putExtra( Globals.VEHICLE_NAME, currentVehicle.getName() );
-                getActivity().startActivity(intent);
+                Intent intent = new Intent( getActivity(), EditVehicleActivity.class );
+                intent.putExtra( Globals.VEHICLE_ID, currentVehicle.getId() );
+                getActivity().startActivityForResult( intent, 1 );
                 break;
         }
-        return super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected( item );
     }
 
 
@@ -112,7 +106,7 @@ public class OverviewFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        if ( currentVehicle != null) {
+        if( currentVehicle != null ) {
             setHasOptionsMenu( true );
         }
     }
@@ -125,41 +119,47 @@ public class OverviewFragment extends Fragment {
     }
 
     private void setUpView() {
-        if ( currentVehicle == null) {
-            noVehicle.setVisibility(View.VISIBLE);
-            vehicle.setVisibility(View.GONE);
-            setUpInitialView();
-        }  else {
-            noVehicle.setVisibility(View.GONE);
-            vehicle.setVisibility(View.VISIBLE);
-            setUpStandardView();
-            calulate();
+        Activity activity = getActivity();
+        if( activity == null )
+            return;
+
+        if( currentVehicle == null ) {
+            noVehicle.setVisibility( View.VISIBLE );
+            vehicle.setVisibility( View.GONE );
+            setUpInitialView( activity );
+        } else {
+            noVehicle.setVisibility( View.GONE );
+            vehicle.setVisibility( View.VISIBLE );
+            setUpStandardView( activity );
+            calculate();
             setUpChart();
         }
     }
 
-    private void setUpInitialView() {
-        newCar = (Button) view.findViewById(R.id.newVehicle);
-        newCar.setOnClickListener(new View.OnClickListener() {
+    private void setUpInitialView( Activity activity ) {
+        activity.setTitle( R.string.app_name );
+        Button newCar = (Button) view.findViewById( R.id.newVehicle );
+        newCar.setOnClickListener( new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick( View v ) {
                 Activity activity = getActivity();
                 if( activity != null ) {
-                    Intent intent = new Intent(getActivity(), EditVehicleActivity.class);
+                    Intent intent = new Intent( getActivity(), EditVehicleActivity.class );
                     activity.startActivityForResult( intent, 1 );
                 }
 
             }
-        });
+        } );
     }
 
-    private void setUpStandardView() {
-        fab = (FloatingActionButton) view.findViewById(R.id.fab);
-        statistic = (Button) view.findViewById(R.id.statistic);
-        total_driven = (TextView) view.findViewById(R.id.total_milage_driven);
-        total_liter = (TextView) view.findViewById(R.id.total_liter);
-        total_prize = (TextView) view.findViewById(R.id.total_paid);
-        average_prize = (TextView) view.findViewById(R.id.average_prize);
+    private void setUpStandardView( Activity activity ) {
+        activity.setTitle( currentVehicle.getName() );
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById( R.id.fab );
+        Button statistic = (Button) view.findViewById( R.id.statistic );
+        total_driven = (TextView) view.findViewById( R.id.total_milage_driven );
+        total_liter = (TextView) view.findViewById( R.id.total_liter );
+        total_prize = (TextView) view.findViewById( R.id.total_paid );
+        average_prize = (TextView) view.findViewById( R.id.average_prize );
 
         fab.setOnClickListener( new View.OnClickListener() {
             @Override
@@ -173,32 +173,34 @@ public class OverviewFragment extends Fragment {
     }
 
     private void openNewInput() {
-        Intent intent = new Intent(getActivity(), EditEntryActivity.class);
+        Intent intent = new Intent( getActivity(), EditEntryActivity.class );
         intent.putExtra( Globals.VEHICLE_ID, currentVehicle.getId() );
         getActivity().startActivityForResult( intent, 1 );
     }
 
-    private void loadVehicle(int id) {
-        currentVehicle = vehicleDBHelper.readVehicle(id);
-        if ( currentVehicle != null)
-            getActivity().setTitle( currentVehicle.getName());
+    private void loadVehicle( int id ) {
+        if( id != -1 ) {
+            currentVehicle = vehicleDBHelper.readVehicle( id );
+        } else
+            currentVehicle = null;
+
     }
 
-    private void calulate() {
+    private void calculate() {
         entries = entryDBHelper.readAllEntriesByVehicleID( currentVehicle.getId() );
         int maxMillage = -1;
         double totalLiter = 0;
         double totalPrize = 0;
 
-        for (GasEntry currentGasEntry : entries) {
-            if (maxMillage < currentGasEntry.getMilage())
+        for ( GasEntry currentGasEntry : entries ) {
+            if( maxMillage < currentGasEntry.getMilage() )
                 maxMillage = currentGasEntry.getMilage();
             totalLiter += currentGasEntry.getLiter();
             totalPrize += (currentGasEntry.getLiter() * currentGasEntry.getPrice_liter());
         }
         double prizeAverage = totalPrize / totalLiter;
-        int millageDriven = maxMillage - Integer.parseInt(String.valueOf( currentVehicle.getMilage() ));
-        if (millageDriven < 0)
+        int millageDriven = maxMillage - Integer.parseInt( String.valueOf( currentVehicle.getMilage() ) );
+        if( millageDriven < 0 )
             millageDriven = 0;
         total_driven.setText( getString( R.string.total_milage_driven, millageDriven ) );
         total_liter.setText( getString( R.string.total_liter, Round.roudToString( totalLiter ) ) );
@@ -206,9 +208,9 @@ public class OverviewFragment extends Fragment {
         average_prize.setText( getString( R.string.average_price, Round.roudToString( prizeAverage ) ) );
     }
 
-    private void setUpChart(){
-        HashMap<Integer, Double> inputs = new HashMap<>(  );
-        for ( GasEntry gasEntry : entries ){
+    private void setUpChart() {
+        HashMap<Integer, Double> inputs = new HashMap<>();
+        for ( GasEntry gasEntry : entries ) {
             double price;
             if( inputs.containsKey( gasEntry.getYear() ) ) {
                 price = inputs.get( gasEntry.getYear() ) + (gasEntry.getPrice_liter() * gasEntry.getLiter());
@@ -225,8 +227,8 @@ public class OverviewFragment extends Fragment {
         int[] colors = new int[inputs.entrySet().size()];
         Iterator it = inputs.entrySet().iterator();
         int counter = 0;
-        while (it.hasNext()) {
-            Map.Entry<Integer, Double> pair = (Map.Entry)it.next();
+        while ( it.hasNext() ) {
+            Map.Entry<Integer, Double> pair = (Map.Entry) it.next();
             dataEntries.add( new Entry( Float.parseFloat( String.valueOf( pair.getValue() ) ), counter ) );
             titles.add( String.valueOf( pair.getKey() ) );
             colors[counter] = pickColor( counter++ );
@@ -267,27 +269,25 @@ public class OverviewFragment extends Fragment {
         lineChart.setDescription("Description");*/
     }
 
-    private int pickColor(int position){
-android.util.Log.d( "mgr", "before " + position );
+    private int pickColor( int position ) {
         position = position % 6;
-android.util.Log.d( "mgr", "after " + position );
         switch ( position ) {
             case 0:
                 return R.color.colorOne;
 
             case 1:
-                return  R.color.colorTwo;
+                return R.color.colorTwo;
 
             case 2:
-                return  R.color.colorThree;
+                return R.color.colorThree;
             case 3:
-                return  R.color.colorFour;
+                return R.color.colorFour;
             case 4:
-                return  R.color.colorFive;
+                return R.color.colorFive;
             case 5:
-                return  R.color.colorSix;
+                return R.color.colorSix;
             default:
-                return  R.color.colorPrimary;
+                return R.color.colorPrimary;
         }
     }
 

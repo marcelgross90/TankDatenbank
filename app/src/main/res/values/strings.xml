@@ -21,4 +21,8 @@
     <string name="no_vehicle_choosen">Kein Fahrzeug ausgewählt</string>
     <string name="no_vehicle">Du musst erst ein Fahrzeug erstellen.</string>
     <string name="prize_per_year">€ pro Jahr</string>
+    <string name="delete">Löschen</string>
+    <string name="delete_for_sure">Wirklich löschen?</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
 </resources>

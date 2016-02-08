@@ -11,6 +11,7 @@ public class VehicleDBHelper {
 
     private static VehicleDBHelper instance;
     private final VehicleDAO vehicleDAO;
+    private final EntryDAO entryDAO;
 
     public static VehicleDBHelper getInstance( Context context ) {
         if( instance == null )
@@ -21,7 +22,7 @@ public class VehicleDBHelper {
 
     public Vehicle readVehicle( int id ) {
         String selection = VehicleDAO.VehicleEntry._ID + " = ?";
-        String[] selectionArgs = {String.valueOf(id)};
+        String[] selectionArgs = {String.valueOf( id )};
 
         List<Vehicle> vehicles = vehicleDAO.read( selection, selectionArgs );
 
@@ -41,27 +42,33 @@ public class VehicleDBHelper {
         return vehicleDAO.read( null, null );
     }
 
+    public void deleteVehicleAndEntries( int vehicleID ) {
+        vehicleDAO.delete( vehicleID );
+        entryDAO.deleteByVehicleId( vehicleID );
+    }
+
     public int createOrUpdate( Vehicle vehicle ) {
         int id;
-        Vehicle existingVehicle = readVehicle(vehicle.getId());
+        Vehicle existingVehicle = readVehicle( vehicle.getId() );
         if( existingVehicle != null ) {
             id = updateVehicle( vehicle );
         } else {
-            id = createNewVehicle(vehicle);
+            id = createNewVehicle( vehicle );
         }
         return id;
     }
 
     private VehicleDBHelper( Context context ) {
         this.vehicleDAO = VehicleDAO.getInstance( context );
+        this.entryDAO = EntryDAO.getInstance( context );
     }
 
     private int updateVehicle( Vehicle vehicle ) {
         ContentValues values = new ContentValues();
-        values.put( VehicleDAO.VehicleEntry.COLUMN_VEHICLE_NAME, vehicle.getName());
-        values.put(VehicleDAO.VehicleEntry.COLUMN_VEHICLE_MILAGE, vehicle.getMilage());
+        values.put( VehicleDAO.VehicleEntry.COLUMN_VEHICLE_NAME, vehicle.getName() );
+        values.put( VehicleDAO.VehicleEntry.COLUMN_VEHICLE_MILAGE, vehicle.getMilage() );
         String selection = VehicleDAO.VehicleEntry._ID + " LIKE ?";
-        String[] where = {String.valueOf(vehicle.getId())};
+        String[] where = {String.valueOf( vehicle.getId() )};
 
         return vehicleDAO.update( values, selection, where );
     }

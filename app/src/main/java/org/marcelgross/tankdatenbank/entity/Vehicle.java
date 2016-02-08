@@ -9,13 +9,13 @@ public class Vehicle {
     public Vehicle() {
     }
 
-    public Vehicle(int id, String name, long milage) {
+    public Vehicle( int id, String name, long milage ) {
         this.id = id;
         this.name = name;
         this.milage = milage;
     }
 
-    public Vehicle(String name, long milage){
+    public Vehicle( String name, long milage ) {
         this.name = name;
         this.milage = milage;
     }
@@ -24,7 +24,7 @@ public class Vehicle {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId( int id ) {
         this.id = id;
     }
 
@@ -32,7 +32,7 @@ public class Vehicle {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName( String name ) {
         this.name = name;
     }
 
@@ -40,7 +40,7 @@ public class Vehicle {
         return milage;
     }
 
-    public void setMilage(long milage) {
+    public void setMilage( long milage ) {
         this.milage = milage;
     }
 }

@@ -15,7 +15,7 @@ public class GasEntry {
     public GasEntry() {
     }
 
-    public GasEntry(String gasstation, int day, int month, int year, double liter, double price_liter, int milage, int vehicleID) {
+    public GasEntry( String gasstation, int day, int month, int year, double liter, double price_liter, int milage, int vehicleID ) {
         this.gasstation = gasstation;
         this.day = day;
         this.month = month;
@@ -26,7 +26,7 @@ public class GasEntry {
         this.vehicleID = vehicleID;
     }
 
-    public GasEntry(int id, String gasstation, int day, int month, int year, double liter, double price_liter, int milage, int vehicleID) {
+    public GasEntry( int id, String gasstation, int day, int month, int year, double liter, double price_liter, int milage, int vehicleID ) {
         this.id = id;
         this.gasstation = gasstation;
         this.day = day;
@@ -42,7 +42,7 @@ public class GasEntry {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId( int id ) {
         this.id = id;
     }
 
@@ -50,7 +50,7 @@ public class GasEntry {
         return gasstation;
     }
 
-    public void setGasstation(String gasstation) {
+    public void setGasstation( String gasstation ) {
         this.gasstation = gasstation;
     }
 
@@ -58,7 +58,7 @@ public class GasEntry {
         return day;
     }
 
-    public void setDay(int day) {
+    public void setDay( int day ) {
         this.day = day;
     }
 
@@ -66,7 +66,7 @@ public class GasEntry {
         return month;
     }
 
-    public void setMonth(int month) {
+    public void setMonth( int month ) {
         this.month = month;
     }
 
@@ -74,7 +74,7 @@ public class GasEntry {
         return year;
     }
 
-    public void setYear(int year) {
+    public void setYear( int year ) {
         this.year = year;
     }
 
@@ -82,7 +82,7 @@ public class GasEntry {
         return liter;
     }
 
-    public void setLiter(double liter) {
+    public void setLiter( double liter ) {
         this.liter = liter;
     }
 
@@ -90,7 +90,7 @@ public class GasEntry {
         return price_liter;
     }
 
-    public void setPrice_liter(double price_liter) {
+    public void setPrice_liter( double price_liter ) {
         this.price_liter = price_liter;
     }
 
@@ -98,7 +98,7 @@ public class GasEntry {
         return milage;
     }
 
-    public void setMilage(int milage) {
+    public void setMilage( int milage ) {
         this.milage = milage;
     }
 
@@ -106,7 +106,7 @@ public class GasEntry {
         return vehicleID;
     }
 
-    public void setVehicleID(int vehicleID) {
+    public void setVehicleID( int vehicleID ) {
         this.vehicleID = vehicleID;
     }
 }
