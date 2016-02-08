@@ -1,5 +1,6 @@
 package org.marcelgross.tankdatenbank.activity;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -141,7 +142,10 @@ public class EditEntryActivity extends AppCompatActivity implements View.OnClick
         } else {
             GasEntry gasEntry = new GasEntry(gasstation_input, day, month, year, liter_input, prize_liter_input, milage_input, vehicleId);
             entryDBHelper.createOrUpdate(gasEntry);
-            onBackPressed();
+            Intent returnIntent = new Intent();
+            returnIntent.putExtra("result",vehicleId);
+            setResult( Activity.RESULT_OK, returnIntent );
+            finish();
         }
     }
 }

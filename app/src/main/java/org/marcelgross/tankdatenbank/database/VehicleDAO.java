@@ -20,12 +20,12 @@ public class VehicleDAO extends BaseDAO {
         return instance;
     }
 
-    public long create(Vehicle vehicle) {
+    public int create(Vehicle vehicle) {
         ContentValues values = new ContentValues();
         values.put(VehicleEntry.COLUMN_VEHICLE_NAME, vehicle.getName());
         values.put(VehicleEntry.COLUMN_VEHICLE_MILAGE, vehicle.getMilage());
 
-        return writeDb.insert(VehicleEntry.TABLE_NAME, null, values);
+        return (int)writeDb.insert(VehicleEntry.TABLE_NAME, null, values);
     }
 
     public int update(ContentValues values, String selection, String[] selectionArgs) {

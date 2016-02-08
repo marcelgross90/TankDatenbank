@@ -27,6 +27,7 @@ import org.marcelgross.tankdatenbank.fragment.OverviewFragment;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static int vehicleID;
     public ActionBarDrawerToggle drawerToggle;
     private FragmentManager fm;
     private DrawerLayout drawerLayout;
@@ -56,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static void replaceFragmentPopBackStack(FragmentManager fm, Fragment fragment) {
         fm.popBackStack();
-        replaceFragment(fm, fragment);
+        replaceFragment( fm, fragment );
     }
 
     @Override
@@ -79,19 +80,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        fm = getSupportFragmentManager();
-        dbHelper = VehicleDBHelper.getInstance(this);
-
-        setUpActionBar();
-        if (savedInstanceState == null) {
-            replaceFragment(fm, new OverviewFragment());
-        }
-    }
-
-    @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         Menu m = navigationView.getMenu();
         for (Vehicle current : dbHelper.readAllVehicles()) {
@@ -101,23 +89,51 @@ public class MainActivity extends AppCompatActivity {
         return super.onPrepareOptionsMenu(menu);
     }
 
-    public void savePreferences(String vehicleName) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+    public void savePreferences(int vehicleId) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(Globals.PREFERENCE_VEHICLE, vehicleName);
+        editor.putInt(Globals.VEHICLE_ID, vehicleId);
 
         editor.apply();
     }
 
+    public int loadSavedPreferences() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences( this );
+        return sharedPreferences.getInt( Globals.VEHICLE_ID, -1 );
+
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult( requestCode, resultCode, data );
         if (requestCode == 1) {
             if (resultCode == Activity.RESULT_OK) {
-                savePreferences(data.getStringExtra("result"));
+                replaceFragmentPopBackStack( fm, OverviewFragment.getInstance( data.getIntExtra( "result", -1 ) ) );
             }
         }
     }
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate( savedInstanceState );
+        setContentView(R.layout.activity_main);
+        fm = getSupportFragmentManager();
+        dbHelper = VehicleDBHelper.getInstance(this);
+
+        setUpActionBar();
+        if (savedInstanceState == null) {
+            replaceFragmentPopBackStack(fm, OverviewFragment.getInstance( loadSavedPreferences() ));
+        }
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        savePreferences( vehicleID );
+    }
+
 
     private void setUpActionBar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -142,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 default:
                     Vehicle selectedVehicle = dbHelper.readVehicle(item.getItemId());
-                    savePreferences(selectedVehicle.getName());
+                    replaceFragmentPopBackStack( fm, OverviewFragment.getInstance( selectedVehicle.getId() ) );
                     break;
             }
             drawerLayout.closeDrawer(GravityCompat.START);

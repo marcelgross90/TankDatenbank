@@ -41,20 +41,22 @@ public class VehicleDBHelper {
         return vehicleDAO.read( null, null );
     }
 
-    public void createOrUpdate( Vehicle vehicle ) {
+    public int createOrUpdate( Vehicle vehicle ) {
+        int id;
         Vehicle existingVehicle = readVehicle(vehicle.getId());
         if( existingVehicle != null ) {
-            updatVehicle(vehicle);
+            id = updateVehicle( vehicle );
         } else {
-            createNewVehicle(vehicle);
+            id = createNewVehicle(vehicle);
         }
+        return id;
     }
 
     private VehicleDBHelper( Context context ) {
         this.vehicleDAO = VehicleDAO.getInstance( context );
     }
 
-    private int updatVehicle( Vehicle vehicle ) {
+    private int updateVehicle( Vehicle vehicle ) {
         ContentValues values = new ContentValues();
         values.put( VehicleDAO.VehicleEntry.COLUMN_VEHICLE_NAME, vehicle.getName());
         values.put(VehicleDAO.VehicleEntry.COLUMN_VEHICLE_MILAGE, vehicle.getMilage());
@@ -64,7 +66,7 @@ public class VehicleDBHelper {
         return vehicleDAO.update( values, selection, where );
     }
 
-    private long createNewVehicle( Vehicle vehicle ) {
+    private int createNewVehicle( Vehicle vehicle ) {
         return vehicleDAO.create( vehicle );
     }
 }

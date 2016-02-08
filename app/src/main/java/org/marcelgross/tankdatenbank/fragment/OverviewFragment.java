@@ -1,9 +1,8 @@
 package org.marcelgross.tankdatenbank.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -18,14 +17,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
 
 import org.marcelgross.tankdatenbank.Globals;
 import org.marcelgross.tankdatenbank.R;
 import org.marcelgross.tankdatenbank.activity.EditEntryActivity;
 import org.marcelgross.tankdatenbank.activity.EditVehicleActivity;
+import org.marcelgross.tankdatenbank.activity.MainActivity;
 import org.marcelgross.tankdatenbank.database.EntryDBHelper;
 import org.marcelgross.tankdatenbank.database.VehicleDBHelper;
 import org.marcelgross.tankdatenbank.entity.GasEntry;
@@ -33,9 +36,12 @@ import org.marcelgross.tankdatenbank.entity.Vehicle;
 import org.marcelgross.tankdatenbank.util.Round;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
-public class OverviewFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class OverviewFragment extends Fragment {
 
     private View view;
     //at least one vehicle exists
@@ -49,17 +55,31 @@ public class OverviewFragment extends Fragment implements SharedPreferences.OnSh
     //no vehicle exists
     private LinearLayout noVehicle;
     private Button newCar;
+
     private VehicleDBHelper vehicleDBHelper;
     private EntryDBHelper entryDBHelper;
-    private Vehicle currentVehilce;
+    private Vehicle currentVehicle;
+    private List<GasEntry> entries;
+
+    public static OverviewFragment getInstance(int id) {
+        Bundle bundle = new Bundle(  );
+        bundle.putInt( Globals.VEHICLE_ID, id );
+        OverviewFragment fragment = new OverviewFragment();
+        fragment.setArguments( bundle );
+        return fragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_overview, container, false);
-        vehicleDBHelper = VehicleDBHelper.getInstance(getActivity());
-        entryDBHelper = EntryDBHelper.getInstance(getActivity());
-        loadVehicle(loadPreferences());
+        view = inflater.inflate( R.layout.fragment_overview, container, false );
+        vehicleDBHelper = VehicleDBHelper.getInstance( getActivity() );
+        entryDBHelper = EntryDBHelper.getInstance( getActivity() );
+
+        Bundle bundle = getArguments();
+        if( bundle != null )
+            loadVehicle(bundle.getInt( Globals.VEHICLE_ID ));
+
 
         vehicle = (LinearLayout) view.findViewById(R.id.vehicle);
         noVehicle = (LinearLayout) view.findViewById(R.id.noVehicle);
@@ -71,7 +91,7 @@ public class OverviewFragment extends Fragment implements SharedPreferences.OnSh
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.edit_menu, menu);
+        inflater.inflate( R.menu.edit_menu, menu );
 
     }
 
@@ -80,41 +100,32 @@ public class OverviewFragment extends Fragment implements SharedPreferences.OnSh
         switch (item.getItemId()) {
             case R.id.action_edit:
                 Intent intent = new Intent(getActivity(), EditVehicleActivity.class);
-                intent.putExtra(Globals.VEHICLE_NAME, currentVehilce.getName());
+                intent.putExtra( Globals.VEHICLE_NAME, currentVehicle.getName() );
                 getActivity().startActivity(intent);
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        PreferenceManager.getDefaultSharedPreferences(getContext())
-                .unregisterOnSharedPreferenceChangeListener(this);
-    }
 
     @Override
     public void onResume() {
         super.onResume();
-        PreferenceManager.getDefaultSharedPreferences(getContext())
-                .registerOnSharedPreferenceChangeListener(this);
 
-        if (currentVehilce != null) {
-            setHasOptionsMenu(true);
+        if ( currentVehicle != null) {
+            setHasOptionsMenu( true );
         }
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-
-        String currentVehicle = sharedPreferences.getString(Globals.PREFERENCE_VEHICLE, "");
-        loadVehicle(currentVehicle);
-        setUpView();
+    public void onStop() {
+        super.onStop();
+        if( currentVehicle != null )
+            MainActivity.vehicleID = currentVehicle.getId();
     }
 
     private void setUpView() {
-        if (currentVehilce == null) {
+        if ( currentVehicle == null) {
             noVehicle.setVisibility(View.VISIBLE);
             vehicle.setVisibility(View.GONE);
             setUpInitialView();
@@ -132,8 +143,12 @@ public class OverviewFragment extends Fragment implements SharedPreferences.OnSh
         newCar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), EditVehicleActivity.class);
-                startActivityForResult(intent, 1);
+                Activity activity = getActivity();
+                if( activity != null ) {
+                    Intent intent = new Intent(getActivity(), EditVehicleActivity.class);
+                    activity.startActivityForResult( intent, 1 );
+                }
+
             }
         });
     }
@@ -146,53 +161,86 @@ public class OverviewFragment extends Fragment implements SharedPreferences.OnSh
         total_prize = (TextView) view.findViewById(R.id.total_paid);
         average_prize = (TextView) view.findViewById(R.id.average_prize);
 
-        fab.setOnClickListener(new View.OnClickListener() {
+        fab.setOnClickListener( new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                if (currentVehilce != null)
+            public void onClick( View v ) {
+                if( currentVehicle != null )
                     openNewInput();
                 else
-                    Toast.makeText(getActivity(), R.string.no_vehicle_choosen, Toast.LENGTH_LONG).show();
+                    Toast.makeText( getActivity(), R.string.no_vehicle_choosen, Toast.LENGTH_LONG ).show();
             }
-        });
+        } );
     }
 
     private void openNewInput() {
         Intent intent = new Intent(getActivity(), EditEntryActivity.class);
-        intent.putExtra(Globals.VEHICLE_ID, currentVehilce.getId());
-        getActivity().startActivity(intent);
+        intent.putExtra( Globals.VEHICLE_ID, currentVehicle.getId() );
+        getActivity().startActivityForResult( intent, 1 );
     }
 
-    private void loadVehicle(String vehicleName) {
-        currentVehilce = vehicleDBHelper.readVehicleByName(vehicleName);
-        if (currentVehilce != null)
-            getActivity().setTitle(currentVehilce.getName());
+    private void loadVehicle(int id) {
+        currentVehicle = vehicleDBHelper.readVehicle(id);
+        if ( currentVehicle != null)
+            getActivity().setTitle( currentVehicle.getName());
     }
 
     private void calulate() {
-        List<GasEntry> entries = entryDBHelper.readAllEntriesByVehicleID(currentVehilce.getId());
-        int maxMilage = -1;
+        entries = entryDBHelper.readAllEntriesByVehicleID( currentVehicle.getId() );
+        int maxMillage = -1;
         double totalLiter = 0;
         double totalPrize = 0;
 
         for (GasEntry currentGasEntry : entries) {
-            if (maxMilage < currentGasEntry.getMilage())
-                maxMilage = currentGasEntry.getMilage();
+            if (maxMillage < currentGasEntry.getMilage())
+                maxMillage = currentGasEntry.getMilage();
             totalLiter += currentGasEntry.getLiter();
             totalPrize += (currentGasEntry.getLiter() * currentGasEntry.getPrice_liter());
         }
         double prizeAverage = totalPrize / totalLiter;
-        int milageDriven = maxMilage - Integer.parseInt(String.valueOf(currentVehilce.getMilage()));
-        if (milageDriven < 0)
-            milageDriven = 0;
-        total_driven.setText(getString(R.string.total_milage_driven, milageDriven));
-        total_liter.setText(getString(R.string.total_liter, Round.roudToString(totalLiter)));
-        total_prize.setText(getString(R.string.total_price_paid, Round.roudToString(totalPrize)));
-        average_prize.setText(getString(R.string.average_price, Round.roudToString(prizeAverage)));
+        int millageDriven = maxMillage - Integer.parseInt(String.valueOf( currentVehicle.getMilage() ));
+        if (millageDriven < 0)
+            millageDriven = 0;
+        total_driven.setText( getString( R.string.total_milage_driven, millageDriven ) );
+        total_liter.setText( getString( R.string.total_liter, Round.roudToString( totalLiter ) ) );
+        total_prize.setText( getString( R.string.total_price_paid, Round.roudToString( totalPrize ) ) );
+        average_prize.setText( getString( R.string.average_price, Round.roudToString( prizeAverage ) ) );
     }
 
     private void setUpChart(){
-        LineChart lineChart = (LineChart) view.findViewById(R.id.chart);
+        HashMap<Integer, Double> inputs = new HashMap<>(  );
+        for ( GasEntry gasEntry : entries ){
+            double price;
+            if( inputs.containsKey( gasEntry.getYear() ) ) {
+                price = inputs.get( gasEntry.getYear() ) + (gasEntry.getPrice_liter() * gasEntry.getLiter());
+            } else {
+                price = gasEntry.getPrice_liter() * gasEntry.getLiter();
+            }
+            inputs.put( gasEntry.getYear(), price );
+        }
+
+        PieChart pieChart = (PieChart) view.findViewById( R.id.chart );
+
+        ArrayList<Entry> dataEntries = new ArrayList<>();
+        ArrayList<String> titles = new ArrayList<>();
+        int[] colors = new int[inputs.entrySet().size()];
+        Iterator it = inputs.entrySet().iterator();
+        int counter = 0;
+        while (it.hasNext()) {
+            Map.Entry<Integer, Double> pair = (Map.Entry)it.next();
+            dataEntries.add( new Entry( Float.parseFloat( String.valueOf( pair.getValue() ) ), counter ) );
+            titles.add( String.valueOf( pair.getKey() ) );
+            colors[counter] = pickColor( counter++ );
+        }
+
+        PieDataSet dataSet = new PieDataSet( dataEntries, "" );
+        dataSet.setValueTextSize( 10 );
+        dataSet.setColors( colors, getContext() );
+        dataSet.notifyDataSetChanged();
+        PieData data = new PieData( titles, dataSet );
+        pieChart.setData( data );
+        pieChart.setDescription( getString( R.string.prize_per_year ) );
+
+       /* LineChart lineChart = (LineChart) view.findViewById(R.id.chart);
         // creating list of entry
         ArrayList<Entry> entries = new ArrayList<>();
         entries.add(new Entry(4f, 0));
@@ -216,11 +264,31 @@ public class OverviewFragment extends Fragment implements SharedPreferences.OnSh
 
         LineData data = new LineData(labels, dataset);
         lineChart.setData(data);
-        lineChart.setDescription("Description");
+        lineChart.setDescription("Description");*/
     }
 
-    private String loadPreferences() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        return sharedPreferences.getString(Globals.PREFERENCE_VEHICLE, "");
+    private int pickColor(int position){
+android.util.Log.d( "mgr", "before " + position );
+        position = position % 6;
+android.util.Log.d( "mgr", "after " + position );
+        switch ( position ) {
+            case 0:
+                return R.color.colorOne;
+
+            case 1:
+                return  R.color.colorTwo;
+
+            case 2:
+                return  R.color.colorThree;
+            case 3:
+                return  R.color.colorFour;
+            case 4:
+                return  R.color.colorFive;
+            case 5:
+                return  R.color.colorSix;
+            default:
+                return  R.color.colorPrimary;
+        }
     }
+
 }

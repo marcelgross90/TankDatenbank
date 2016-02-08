@@ -2,7 +2,6 @@ package org.marcelgross.tankdatenbank.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,11 +21,11 @@ public class EditVehicleActivity extends AppCompatActivity {
 
     private View view;
     private EditText name;
-    private EditText milage;
+    private EditText millage;
     private Button save;
 
     private VehicleDBHelper dbHelper;
-    private Vehicle currentVehilce;
+    private Vehicle currentVehicle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +37,7 @@ public class EditVehicleActivity extends AppCompatActivity {
         dbHelper = VehicleDBHelper.getInstance(this);
         view = findViewById(R.id.view);
         name = (EditText) findViewById(R.id.vehicleName);
-        milage = (EditText) findViewById(R.id.vehicleMilage);
+        millage = (EditText) findViewById(R.id.vehicleMilage);
         save = (Button) findViewById(R.id.save);
 
         save.setOnClickListener(new View.OnClickListener() {
@@ -65,28 +64,28 @@ public class EditVehicleActivity extends AppCompatActivity {
         }
     }
     private void assignData(String vehicleName) {
-        currentVehilce = dbHelper.readVehicleByName(vehicleName);
-        name.setText(currentVehilce.getName());
-        milage.setText(String.valueOf(currentVehilce.getMilage()));
+        currentVehicle = dbHelper.readVehicleByName(vehicleName);
+        name.setText( currentVehicle.getName() );
+        millage.setText( String.valueOf( currentVehicle.getMilage() ) );
     }
 
     private void saveVehicle() {
-        if (currentVehilce == null)
-            currentVehilce = new Vehicle();
+        if ( currentVehicle == null)
+            currentVehicle = new Vehicle();
         String vehicleName = name.getText().toString().trim();
-        long vehicleMilage = Long.parseLong(milage.getText().toString().isEmpty() ? "-1" : milage.getText().toString());
+        long vehicleMilage = Long.parseLong( millage.getText().toString().isEmpty() ? "-1" : millage.getText().toString());
 
         if (vehicleName.isEmpty() || vehicleMilage < 0) {
             Toast.makeText(this, R.string.invalid_inputs, Toast.LENGTH_LONG).show();
         } else {
 
-            currentVehilce.setName(vehicleName);
-            currentVehilce.setMilage(vehicleMilage);
-            dbHelper.createOrUpdate(currentVehilce);
+            currentVehicle.setName( vehicleName );
+            currentVehicle.setMilage( vehicleMilage );
+            int vehicleId = dbHelper.createOrUpdate( currentVehicle );
             Intent returnIntent = new Intent();
-            returnIntent.putExtra("result",vehicleName);
+            returnIntent.putExtra("result",vehicleId);
             setResult(Activity.RESULT_OK, returnIntent);
-            onBackPressed();
+            finish();
         }
     }
 
