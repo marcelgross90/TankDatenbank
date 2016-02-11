@@ -23,7 +23,7 @@ public class VehicleDAO extends BaseDAO {
     public int create( Vehicle vehicle ) {
         ContentValues values = new ContentValues();
         values.put( VehicleEntry.COLUMN_VEHICLE_NAME, vehicle.getName() );
-        values.put( VehicleEntry.COLUMN_VEHICLE_MILAGE, vehicle.getMilage() );
+        values.put( VehicleEntry.COLUMN_VEHICLE_MILLAGE, vehicle.getMillage() );
 
         return (int) writeDb.insert( VehicleEntry.TABLE_NAME, null, values );
     }
@@ -38,7 +38,7 @@ public class VehicleDAO extends BaseDAO {
         String[] projection = {
                 VehicleEntry._ID,
                 VehicleEntry.COLUMN_VEHICLE_NAME,
-                VehicleEntry.COLUMN_VEHICLE_MILAGE
+                VehicleEntry.COLUMN_VEHICLE_MILLAGE
         };
 
         Cursor c = readDb.query(
@@ -58,8 +58,8 @@ public class VehicleDAO extends BaseDAO {
                         c.getInt( c.getColumnIndexOrThrow( VehicleEntry._ID ) ) );
                 currentVehicle.setName(
                         c.getString( c.getColumnIndexOrThrow( VehicleEntry.COLUMN_VEHICLE_NAME ) ) );
-                currentVehicle.setMilage(
-                        c.getLong( c.getColumnIndexOrThrow( VehicleEntry.COLUMN_VEHICLE_MILAGE ) ) );
+                currentVehicle.setMillage(
+                        c.getLong( c.getColumnIndexOrThrow( VehicleEntry.COLUMN_VEHICLE_MILLAGE ) ) );
                 vehicles.add( currentVehicle );
             } while ( c.moveToNext() );
         }

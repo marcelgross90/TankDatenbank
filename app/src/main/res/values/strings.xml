@@ -6,10 +6,10 @@
     <string name="my_vehicles">Meine Fahrzeuge</string>
     <string name="save">Speichern</string>
     <string name="vehicle_name">Fahrzeug Name</string>
-    <string name="milage">Kilometerstand</string>
+    <string name="millage">Kilometerstand</string>
     <string name="invalid_inputs">Ungültie Eingaben</string>
     <string name="edit">Bearbeiten</string>
-    <string name="total_milage_driven">Total %s km Gefahren</string>
+    <string name="total_millage_driven">Total %s km Gefahren</string>
     <string name="total_liter">Insgesamt %s l getankt</string>
     <string name="total_price_paid">Insgesamt %s € bezahlt</string>
     <string name="average_price">Durchschnitts Preis %s €</string>
@@ -18,7 +18,7 @@
     <string name="gasstation">Tankstelle</string>
     <string name="liter">Liter</string>
     <string name="prize_liter">Preis/Liter</string>
-    <string name="no_vehicle_choosen">Kein Fahrzeug ausgewählt</string>
+    <string name="no_vehicle_chosen">Kein Fahrzeug ausgewählt</string>
     <string name="no_vehicle">Du musst erst ein Fahrzeug erstellen.</string>
     <string name="prize_per_year">€ pro Jahr</string>
     <string name="delete">Löschen</string>

@@ -66,7 +66,7 @@ public class VehicleDBHelper {
     private int updateVehicle( Vehicle vehicle ) {
         ContentValues values = new ContentValues();
         values.put( VehicleDAO.VehicleEntry.COLUMN_VEHICLE_NAME, vehicle.getName() );
-        values.put( VehicleDAO.VehicleEntry.COLUMN_VEHICLE_MILAGE, vehicle.getMilage() );
+        values.put( VehicleDAO.VehicleEntry.COLUMN_VEHICLE_MILLAGE, vehicle.getMillage() );
         String selection = VehicleDAO.VehicleEntry._ID + " LIKE ?";
         String[] where = {String.valueOf( vehicle.getId() )};
 

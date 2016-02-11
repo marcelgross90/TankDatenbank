@@ -7,9 +7,6 @@ import org.marcelgross.tankdatenbank.entity.GasEntry;
 
 import java.util.List;
 
-/**
- * Created by Marcel on 06.02.2016.
- */
 public class EntryDBHelper {
 
     private static EntryDBHelper instance;
@@ -44,7 +41,7 @@ public class EntryDBHelper {
     public void createOrUpdate( GasEntry gasEntry ) {
         GasEntry existingGasEntry = readEntry( gasEntry.getId() );
         if( existingGasEntry != null ) {
-            updatEntry( gasEntry );
+            updateEntry( gasEntry );
         } else {
             createNewEntry( gasEntry );
         }
@@ -54,7 +51,7 @@ public class EntryDBHelper {
         this.entryDAO = EntryDAO.getInstance( context );
     }
 
-    private int updatEntry( GasEntry gasEntry ) {
+    private int updateEntry( GasEntry gasEntry ) {
         ContentValues values = new ContentValues();
         values.put( BaseDAO.EntryEntry.COLUMN_ENTRY_GASSTATION, gasEntry.getGasstation() );
         values.put( BaseDAO.EntryEntry.COLUMN_ENTRY_DAY, gasEntry.getDay() );
@@ -62,7 +59,7 @@ public class EntryDBHelper {
         values.put( BaseDAO.EntryEntry.COLUMN_ENTRY_YEAR, gasEntry.getYear() );
         values.put( BaseDAO.EntryEntry.COLUMN_ENTRY_LITER, gasEntry.getLiter() );
         values.put( BaseDAO.EntryEntry.COLUMN_ENTRY_PRICE_LITER, gasEntry.getPrice_liter() );
-        values.put( BaseDAO.EntryEntry.COLUMN_ENTRY_MILAGE, gasEntry.getMilage() );
+        values.put( BaseDAO.EntryEntry.COLUMN_ENTRY_MILLAGE, gasEntry.getMillage() );
         values.put( BaseDAO.EntryEntry.COLUMN_ENTRY_VEHICLE_ID, gasEntry.getVehicleID() );
         String selection = BaseDAO.EntryEntry._ID + " LIKE ?";
         String[] where = {String.valueOf( gasEntry.getId() )};

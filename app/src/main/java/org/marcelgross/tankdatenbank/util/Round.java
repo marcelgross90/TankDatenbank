@@ -10,7 +10,7 @@ public class Round {
         return input;
     }
 
-    public static String roudToString( double input ) {
-        return String.format( "%.2f", round( input ) );
+    public static String roundToString( double input ) {
+        return String.format( "%.2f", round( input ) ).replace( ",", "." );
     }
 }

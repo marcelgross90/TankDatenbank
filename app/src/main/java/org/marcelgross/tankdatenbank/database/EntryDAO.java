@@ -9,9 +9,6 @@ import org.marcelgross.tankdatenbank.entity.GasEntry;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Marcel on 06.02.2016.
- */
 public class EntryDAO extends BaseDAO {
 
     private static EntryDAO instance;
@@ -31,7 +28,7 @@ public class EntryDAO extends BaseDAO {
         values.put( EntryEntry.COLUMN_ENTRY_YEAR, gasEntry.getYear() );
         values.put( EntryEntry.COLUMN_ENTRY_LITER, gasEntry.getLiter() );
         values.put( EntryEntry.COLUMN_ENTRY_PRICE_LITER, gasEntry.getPrice_liter() );
-        values.put( EntryEntry.COLUMN_ENTRY_MILAGE, gasEntry.getMilage() );
+        values.put( EntryEntry.COLUMN_ENTRY_MILLAGE, gasEntry.getMillage() );
         values.put( EntryEntry.COLUMN_ENTRY_VEHICLE_ID, gasEntry.getVehicleID() );
 
         return writeDb.insert( EntryEntry.TABLE_NAME, null, values );
@@ -52,7 +49,7 @@ public class EntryDAO extends BaseDAO {
                 EntryEntry.COLUMN_ENTRY_YEAR,
                 EntryEntry.COLUMN_ENTRY_LITER,
                 EntryEntry.COLUMN_ENTRY_PRICE_LITER,
-                EntryEntry.COLUMN_ENTRY_MILAGE,
+                EntryEntry.COLUMN_ENTRY_MILLAGE,
                 EntryEntry.COLUMN_ENTRY_VEHICLE_ID
         };
 
@@ -83,8 +80,8 @@ public class EntryDAO extends BaseDAO {
                         c.getDouble( c.getColumnIndexOrThrow( EntryEntry.COLUMN_ENTRY_LITER ) ) );
                 currentGasEntry.setPrice_liter(
                         c.getDouble( c.getColumnIndexOrThrow( EntryEntry.COLUMN_ENTRY_PRICE_LITER ) ) );
-                currentGasEntry.setMilage(
-                        c.getInt( c.getColumnIndexOrThrow( EntryEntry.COLUMN_ENTRY_MILAGE ) ) );
+                currentGasEntry.setMillage(
+                        c.getInt( c.getColumnIndexOrThrow( EntryEntry.COLUMN_ENTRY_MILLAGE ) ) );
                 currentGasEntry.setVehicleID(
                         c.getInt( c.getColumnIndexOrThrow( EntryEntry.COLUMN_ENTRY_VEHICLE_ID ) ) );
                 entries.add( currentGasEntry );

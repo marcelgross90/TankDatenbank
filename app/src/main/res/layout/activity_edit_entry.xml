@@ -37,6 +37,11 @@
                 android:layout_gravity="center_horizontal"
                 android:hint="@string/liter" />
 
+            <SeekBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/seekBar"/>
+
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -51,9 +56,9 @@
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:ems="10"
-                android:id="@+id/milage"
+                android:id="@+id/millage"
                 android:layout_gravity="center_horizontal"
-                android:hint="@string/milage" />
+                android:hint="@string/millage" />
 
             <Button
                 android:layout_width="match_parent"

@@ -14,12 +14,14 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import org.marcelgross.tankdatenbank.Globals;
 import org.marcelgross.tankdatenbank.R;
 import org.marcelgross.tankdatenbank.database.EntryDBHelper;
 import org.marcelgross.tankdatenbank.entity.GasEntry;
+import org.marcelgross.tankdatenbank.util.Round;
 
 import java.util.Calendar;
 
@@ -28,9 +30,8 @@ public class EditEntryActivity extends AppCompatActivity implements View.OnClick
     private EditText gasstation;
     private EditText liter;
     private EditText prize_liter;
-    private EditText milage;
+    private EditText millage;
     private Button date;
-    private Button save;
 
     private int vehicleId;
     private int year;
@@ -71,7 +72,7 @@ public class EditEntryActivity extends AppCompatActivity implements View.OnClick
         this.year = year;
         this.month = monthOfYear + 1;
         this.day = dayOfMonth;
-        date.setText( day + "." + month + "." + year );
+        date.setText( String.format( "%d.%d.%d", day, month, year ) );
         dateSelected = true;
         hideKeyBoard();
     }
@@ -117,12 +118,31 @@ public class EditEntryActivity extends AppCompatActivity implements View.OnClick
         gasstation = (EditText) findViewById( R.id.gasstation );
         liter = (EditText) findViewById( R.id.liter );
         prize_liter = (EditText) findViewById( R.id.prize_liter );
-        milage = (EditText) findViewById( R.id.milage );
+        millage = (EditText) findViewById( R.id.millage );
         date = (Button) findViewById( R.id.date );
-        save = (Button) findViewById( R.id.save );
+        Button save = (Button) findViewById( R.id.save );
+        SeekBar seekBar = (SeekBar) findViewById( R.id.seekBar );
 
         date.setOnClickListener( this );
         save.setOnClickListener( this );
+        seekBar.setMax( 10000 );
+        seekBar.setProgress( 5000 );
+        seekBar.setOnSeekBarChangeListener( new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged( SeekBar seekBar, int progress, boolean fromUser ) {
+                prize_liter.setText( progressToPrize( progress ) );
+            }
+
+            @Override
+            public void onStartTrackingTouch( SeekBar seekBar ) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch( SeekBar seekBar ) {
+
+            }
+        } );
     }
 
     private void saveEntry() {
@@ -131,21 +151,25 @@ public class EditEntryActivity extends AppCompatActivity implements View.OnClick
                 "0" : liter.getText().toString() );
         double prize_liter_input = Double.parseDouble( prize_liter.getText().toString().isEmpty() ?
                 "0" : prize_liter.getText().toString() );
-        int milage_input = Integer.parseInt( milage.getText().toString().isEmpty() ? "0" : milage.getText().toString() );
+        int millage_input = Integer.parseInt( millage.getText().toString().isEmpty() ? "0" : millage.getText().toString() );
 
         if( liter_input <= 0 ||
                 gasstation_input.isEmpty() ||
                 prize_liter_input <= 0 ||
-                milage_input <= 0 ||
+                millage_input <= 0 ||
                 !dateSelected ) {
             Toast.makeText( EditEntryActivity.this, R.string.invalid_inputs, Toast.LENGTH_LONG ).show();
         } else {
-            GasEntry gasEntry = new GasEntry( gasstation_input, day, month, year, liter_input, prize_liter_input, milage_input, vehicleId );
+            GasEntry gasEntry = new GasEntry( gasstation_input, day, month, year, liter_input, prize_liter_input, millage_input, vehicleId );
             entryDBHelper.createOrUpdate( gasEntry );
             Intent returnIntent = new Intent();
             returnIntent.putExtra( "result", vehicleId );
             setResult( Activity.RESULT_OK, returnIntent );
             finish();
         }
+    }
+
+    private String progressToPrize( int progress ) {
+        return  Round.roundToString( ((double) progress * 2.0) / 10000.0 );
     }
 }

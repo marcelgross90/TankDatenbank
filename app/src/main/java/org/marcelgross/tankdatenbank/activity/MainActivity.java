@@ -28,7 +28,7 @@ import org.marcelgross.tankdatenbank.fragment.OverviewFragment;
 public class MainActivity extends AppCompatActivity {
 
     public static int vehicleID;
-    public ActionBarDrawerToggle drawerToggle;
+    private ActionBarDrawerToggle drawerToggle;
     private FragmentManager fm;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;

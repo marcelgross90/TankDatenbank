@@ -9,24 +9,24 @@ public class GasEntry {
     private int year;
     private double liter;
     private double price_liter;
-    private int milage;
+    private int millage;
     private int vehicleID;
 
     public GasEntry() {
     }
 
-    public GasEntry( String gasstation, int day, int month, int year, double liter, double price_liter, int milage, int vehicleID ) {
+    public GasEntry( String gasstation, int day, int month, int year, double liter, double price_liter, int millage, int vehicleID ) {
         this.gasstation = gasstation;
         this.day = day;
         this.month = month;
         this.year = year;
         this.liter = liter;
         this.price_liter = price_liter;
-        this.milage = milage;
+        this.millage = millage;
         this.vehicleID = vehicleID;
     }
 
-    public GasEntry( int id, String gasstation, int day, int month, int year, double liter, double price_liter, int milage, int vehicleID ) {
+    public GasEntry( int id, String gasstation, int day, int month, int year, double liter, double price_liter, int millage, int vehicleID ) {
         this.id = id;
         this.gasstation = gasstation;
         this.day = day;
@@ -34,7 +34,7 @@ public class GasEntry {
         this.year = year;
         this.liter = liter;
         this.price_liter = price_liter;
-        this.milage = milage;
+        this.millage = millage;
         this.vehicleID = vehicleID;
     }
 
@@ -94,12 +94,12 @@ public class GasEntry {
         this.price_liter = price_liter;
     }
 
-    public int getMilage() {
-        return milage;
+    public int getMillage() {
+        return millage;
     }
 
-    public void setMilage( int milage ) {
-        this.milage = milage;
+    public void setMillage( int millage ) {
+        this.millage = millage;
     }
 
     public int getVehicleID() {

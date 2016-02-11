@@ -156,7 +156,7 @@ public class OverviewFragment extends Fragment {
         activity.setTitle( currentVehicle.getName() );
         FloatingActionButton fab = (FloatingActionButton) view.findViewById( R.id.fab );
         Button statistic = (Button) view.findViewById( R.id.statistic );
-        total_driven = (TextView) view.findViewById( R.id.total_milage_driven );
+        total_driven = (TextView) view.findViewById( R.id.total_millage_driven );
         total_liter = (TextView) view.findViewById( R.id.total_liter );
         total_prize = (TextView) view.findViewById( R.id.total_paid );
         average_prize = (TextView) view.findViewById( R.id.average_prize );
@@ -167,7 +167,7 @@ public class OverviewFragment extends Fragment {
                 if( currentVehicle != null )
                     openNewInput();
                 else
-                    Toast.makeText( getActivity(), R.string.no_vehicle_choosen, Toast.LENGTH_LONG ).show();
+                    Toast.makeText( getActivity(), R.string.no_vehicle_chosen, Toast.LENGTH_LONG ).show();
             }
         } );
     }
@@ -193,19 +193,19 @@ public class OverviewFragment extends Fragment {
         double totalPrize = 0;
 
         for ( GasEntry currentGasEntry : entries ) {
-            if( maxMillage < currentGasEntry.getMilage() )
-                maxMillage = currentGasEntry.getMilage();
+            if( maxMillage < currentGasEntry.getMillage() )
+                maxMillage = currentGasEntry.getMillage();
             totalLiter += currentGasEntry.getLiter();
             totalPrize += (currentGasEntry.getLiter() * currentGasEntry.getPrice_liter());
         }
         double prizeAverage = totalPrize / totalLiter;
-        int millageDriven = maxMillage - Integer.parseInt( String.valueOf( currentVehicle.getMilage() ) );
+        int millageDriven = maxMillage - Integer.parseInt( String.valueOf( currentVehicle.getMillage() ) );
         if( millageDriven < 0 )
             millageDriven = 0;
-        total_driven.setText( getString( R.string.total_milage_driven, millageDriven ) );
-        total_liter.setText( getString( R.string.total_liter, Round.roudToString( totalLiter ) ) );
-        total_prize.setText( getString( R.string.total_price_paid, Round.roudToString( totalPrize ) ) );
-        average_prize.setText( getString( R.string.average_price, Round.roudToString( prizeAverage ) ) );
+        total_driven.setText( getString( R.string.total_millage_driven, millageDriven ) );
+        total_liter.setText( getString( R.string.total_liter, Round.roundToString( totalLiter ) ) );
+        total_prize.setText( getString( R.string.total_price_paid, Round.roundToString( totalPrize ) ) );
+        average_prize.setText( getString( R.string.average_price, Round.roundToString( prizeAverage ) ) );
     }
 
     private void setUpChart() {

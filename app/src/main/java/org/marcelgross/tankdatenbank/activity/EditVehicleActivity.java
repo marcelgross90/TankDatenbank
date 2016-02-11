@@ -23,10 +23,8 @@ import org.marcelgross.tankdatenbank.fragment.DeleteDialogFragment;
 
 public class EditVehicleActivity extends AppCompatActivity implements DeleteDialogFragment.DeleteDialog {
 
-    private View view;
     private EditText name;
     private EditText millage;
-    private Button save;
     private FragmentManager fm;
 
     private VehicleDBHelper dbHelper;
@@ -43,10 +41,9 @@ public class EditVehicleActivity extends AppCompatActivity implements DeleteDial
 
         fm = getSupportFragmentManager();
         dbHelper = VehicleDBHelper.getInstance( this );
-        view = findViewById( R.id.view );
         name = (EditText) findViewById( R.id.vehicleName );
-        millage = (EditText) findViewById( R.id.vehicleMilage );
-        save = (Button) findViewById( R.id.save );
+        millage = (EditText) findViewById( R.id.vehicleMillage );
+        Button save = (Button) findViewById( R.id.save );
 
         save.setOnClickListener( new View.OnClickListener() {
             @Override
@@ -111,7 +108,7 @@ public class EditVehicleActivity extends AppCompatActivity implements DeleteDial
     private void assignData() {
         currentVehicle = dbHelper.readVehicle( vehicleId );
         name.setText( currentVehicle.getName() );
-        millage.setText( String.valueOf( currentVehicle.getMilage() ) );
+        millage.setText( String.valueOf( currentVehicle.getMillage() ) );
 
 
     }
@@ -127,7 +124,7 @@ public class EditVehicleActivity extends AppCompatActivity implements DeleteDial
         } else {
 
             currentVehicle.setName( vehicleName );
-            currentVehicle.setMilage( vehicleMillage );
+            currentVehicle.setMillage( vehicleMillage );
             int vehicleId = dbHelper.createOrUpdate( currentVehicle );
             Intent returnIntent = new Intent();
             returnIntent.putExtra( "result", vehicleId );

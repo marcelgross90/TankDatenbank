@@ -5,10 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 
-/**
- * Created by Marcel on 06.02.2016.
- */
-public class BaseDAO extends SQLiteOpenHelper {
+class BaseDAO extends SQLiteOpenHelper {
 
     private static final String TEXT_TYPE = " TEXT";
     private static final String INTEGER_TYPE = " INTEGER";
@@ -19,7 +16,7 @@ public class BaseDAO extends SQLiteOpenHelper {
             "CREATE TABLE IF NOT EXISTS " + VehicleEntry.TABLE_NAME + " (" +
                     VehicleEntry._ID + INTEGER_TYPE + " PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
                     VehicleEntry.COLUMN_VEHICLE_NAME + TEXT_TYPE + COMMA_SEP +
-                    VehicleEntry.COLUMN_VEHICLE_MILAGE + REAL_TYPE + " )";
+                    VehicleEntry.COLUMN_VEHICLE_MILLAGE + REAL_TYPE + " )";
 
     private static final String SQL_DELETE_VEHICLE_ENTRIES =
             "DROP TABLE IF EXISTS " + VehicleEntry.TABLE_NAME;
@@ -33,7 +30,7 @@ public class BaseDAO extends SQLiteOpenHelper {
                     EntryEntry.COLUMN_ENTRY_YEAR + INTEGER_TYPE + COMMA_SEP +
                     EntryEntry.COLUMN_ENTRY_LITER + REAL_TYPE + COMMA_SEP +
                     EntryEntry.COLUMN_ENTRY_PRICE_LITER + REAL_TYPE + COMMA_SEP +
-                    EntryEntry.COLUMN_ENTRY_MILAGE + INTEGER_TYPE + COMMA_SEP +
+                    EntryEntry.COLUMN_ENTRY_MILLAGE + INTEGER_TYPE + COMMA_SEP +
                     EntryEntry.COLUMN_ENTRY_VEHICLE_ID + INTEGER_TYPE + " )";
 
     private static final String SQL_DELETE_ENTRY_ENTRIES =
@@ -49,7 +46,7 @@ public class BaseDAO extends SQLiteOpenHelper {
     public static abstract class VehicleEntry implements BaseColumns {
         public static final String TABLE_NAME = "vehicles";
         public static final String COLUMN_VEHICLE_NAME = "name";
-        public static final String COLUMN_VEHICLE_MILAGE = "milage";
+        public static final String COLUMN_VEHICLE_MILLAGE = "millage";
     }
 
     public static abstract class EntryEntry implements BaseColumns {
@@ -60,7 +57,7 @@ public class BaseDAO extends SQLiteOpenHelper {
         public static final String COLUMN_ENTRY_YEAR = "year";
         public static final String COLUMN_ENTRY_LITER = "liter";
         public static final String COLUMN_ENTRY_PRICE_LITER = "priceLiter";
-        public static final String COLUMN_ENTRY_MILAGE = "milage";
+        public static final String COLUMN_ENTRY_MILLAGE = "millage";
         public static final String COLUMN_ENTRY_VEHICLE_ID = "vehicleId";
     }
 

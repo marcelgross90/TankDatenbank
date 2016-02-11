@@ -16,7 +16,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.EditVehicleActivity" />
-        <activity android:name=".activity.EditEntryActivity"></activity>
+        <activity android:name=".activity.EditEntryActivity"/>
     </application>
 
 </manifest>
