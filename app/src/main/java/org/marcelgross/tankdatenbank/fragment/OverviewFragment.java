@@ -27,6 +27,7 @@ import org.marcelgross.tankdatenbank.R;
 import org.marcelgross.tankdatenbank.activity.EditEntryActivity;
 import org.marcelgross.tankdatenbank.activity.EditVehicleActivity;
 import org.marcelgross.tankdatenbank.activity.MainActivity;
+import org.marcelgross.tankdatenbank.activity.StatisticActivity;
 import org.marcelgross.tankdatenbank.database.EntryDBHelper;
 import org.marcelgross.tankdatenbank.database.VehicleDBHelper;
 import org.marcelgross.tankdatenbank.entity.GasEntry;
@@ -170,6 +171,18 @@ public class OverviewFragment extends Fragment {
                     Toast.makeText( getActivity(), R.string.no_vehicle_chosen, Toast.LENGTH_LONG ).show();
             }
         } );
+        statistic.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick( View v ) {
+                if( currentVehicle != null ) {
+                    //MainActivity.replaceFragment( getFragmentManager(), EntriesListFragment.getInstance( currentVehicle.getId() ) );
+                    Intent intent = new Intent( getActivity(), StatisticActivity.class );
+                    intent.putExtra( Globals.VEHICLE_ID, currentVehicle.getId() );
+                    startActivity( intent );
+                } else
+                    Toast.makeText( getActivity(), R.string.no_vehicle_chosen, Toast.LENGTH_LONG ).show();
+            }
+        } );
     }
 
     private void openNewInput() {
@@ -242,31 +255,6 @@ public class OverviewFragment extends Fragment {
         pieChart.setData( data );
         pieChart.setDescription( getString( R.string.prize_per_year ) );
 
-       /* LineChart lineChart = (LineChart) view.findViewById(R.id.chart);
-        // creating list of entry
-        ArrayList<Entry> entries = new ArrayList<>();
-        entries.add(new Entry(4f, 0));
-        entries.add(new Entry(8f, 1));
-        entries.add(new Entry(6f, 2));
-        entries.add(new Entry(2f, 3));
-        entries.add(new Entry(18f, 4));
-        entries.add(new Entry(9f, 5));
-
-        LineDataSet dataset = new LineDataSet(entries, "# of Calls");
-        dataset.setDrawFilled(true);
-      //  dataset.setDrawCubic(true);
-
-        ArrayList<String> labels = new ArrayList<>();
-        labels.add("January");
-        labels.add("February");
-        labels.add("March");
-        labels.add("April");
-        labels.add("May");
-        labels.add("June");
-
-        LineData data = new LineData(labels, dataset);
-        lineChart.setData(data);
-        lineChart.setDescription("Description");*/
     }
 
     private int pickColor( int position ) {

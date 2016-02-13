@@ -18,6 +18,7 @@
     <string name="gasstation">Tankstelle</string>
     <string name="liter">Liter</string>
     <string name="prize_liter">Preis/Liter</string>
+    <string name="prize">Preis</string>
     <string name="no_vehicle_chosen">Kein Fahrzeug ausgewählt</string>
     <string name="no_vehicle">Du musst erst ein Fahrzeug erstellen.</string>
     <string name="prize_per_year">€ pro Jahr</string>
@@ -25,4 +26,20 @@
     <string name="delete_for_sure">Wirklich löschen?</string>
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
+    <string name="prize_with_currency">%s €</string>
+    <string name="prize_liter_with_currency">%s €/l</string>
+    <string-array name="months">
+        <item>Januar</item>
+        <item>Februar</item>
+        <item>März</item>
+        <item>April</item>
+        <item>Mai</item>
+        <item>Juni</item>
+        <item>Juli</item>
+        <item>August</item>
+        <item>September</item>
+        <item>Oktober</item>
+        <item>November</item>
+        <item>Dezember</item>
+    </string-array>
 </resources>

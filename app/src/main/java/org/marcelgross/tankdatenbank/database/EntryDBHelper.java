@@ -37,6 +37,20 @@ public class EntryDBHelper {
         String[] selectionArgs = {String.valueOf( id )};
         return entryDAO.read( selection, selectionArgs );
     }
+    public List<GasEntry> readAllEntriesByIdAndYear( int id, int year ) {
+        String selection = EntryDAO.EntryEntry.COLUMN_ENTRY_VEHICLE_ID + " = ? AND " +
+                BaseDAO.EntryEntry.COLUMN_ENTRY_YEAR + " = ?";
+        String[] selectionArgs = {String.valueOf( id ), String.valueOf( year )};
+        return entryDAO.read( selection, selectionArgs );
+    }
+
+    public List<GasEntry> readAllEntriesByIdAndYearAndMonth( int id, int year, int month ) {
+        String selection = EntryDAO.EntryEntry.COLUMN_ENTRY_VEHICLE_ID + " = ? AND " +
+                BaseDAO.EntryEntry.COLUMN_ENTRY_YEAR + " = ? AND " +
+                BaseDAO.EntryEntry.COLUMN_ENTRY_MONTH + " = ?";
+        String[] selectionArgs = {String.valueOf( id ), String.valueOf( year ), String.valueOf( month )};
+        return entryDAO.read( selection, selectionArgs );
+    }
 
     public void createOrUpdate( GasEntry gasEntry ) {
         GasEntry existingGasEntry = readEntry( gasEntry.getId() );
@@ -45,6 +59,10 @@ public class EntryDBHelper {
         } else {
             createNewEntry( gasEntry );
         }
+    }
+
+    public void delete(int id) {
+        entryDAO.delete( id );
     }
 
     private EntryDBHelper( Context context ) {

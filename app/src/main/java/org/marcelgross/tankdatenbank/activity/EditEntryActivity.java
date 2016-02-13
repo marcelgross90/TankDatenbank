@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -21,11 +23,12 @@ import org.marcelgross.tankdatenbank.Globals;
 import org.marcelgross.tankdatenbank.R;
 import org.marcelgross.tankdatenbank.database.EntryDBHelper;
 import org.marcelgross.tankdatenbank.entity.GasEntry;
+import org.marcelgross.tankdatenbank.fragment.DeleteDialogFragment;
 import org.marcelgross.tankdatenbank.util.Round;
 
 import java.util.Calendar;
 
-public class EditEntryActivity extends AppCompatActivity implements View.OnClickListener, DatePickerDialog.OnDateSetListener {
+public class EditEntryActivity extends AppCompatActivity implements View.OnClickListener, DatePickerDialog.OnDateSetListener, DeleteDialogFragment.DeleteDialog {
 
     private EditText gasstation;
     private EditText liter;
@@ -34,6 +37,7 @@ public class EditEntryActivity extends AppCompatActivity implements View.OnClick
     private Button date;
 
     private int vehicleId;
+    private int entryId;
     private int year;
     private int month;
     private int day;
@@ -47,6 +51,7 @@ public class EditEntryActivity extends AppCompatActivity implements View.OnClick
 
         Intent intent = getIntent();
         vehicleId = intent.getIntExtra( Globals.VEHICLE_ID, -1 );
+        entryId = intent.getIntExtra( Globals.ENTRY_ID, -1 );
 
         entryDBHelper = EntryDBHelper.getInstance( this );
         setUpActionBar();
@@ -75,17 +80,6 @@ public class EditEntryActivity extends AppCompatActivity implements View.OnClick
         date.setText( String.format( "%d.%d.%d", day, month, year ) );
         dateSelected = true;
         hideKeyBoard();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected( MenuItem item ) {
-        switch ( item.getItemId() ) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-            default:
-                return super.onOptionsItemSelected( item );
-        }
     }
 
     private void hideKeyBoard() {
@@ -143,6 +137,21 @@ public class EditEntryActivity extends AppCompatActivity implements View.OnClick
 
             }
         } );
+        if( entryId != -1 )
+            fillView();
+    }
+
+    private void fillView() {
+        GasEntry entry = entryDBHelper.readEntry( entryId );
+        gasstation.setText( entry.getGasstation() );
+        liter.setText( String.valueOf( entry.getLiter() ));
+        prize_liter.setText( String.valueOf( entry.getPrice_liter() ));
+        millage.setText( String.valueOf( entry.getMillage() ) );
+        date.setText( String.format( "%d.%d.%d", entry.getDay(), entry.getMonth(), entry.getYear() ) );
+        day = entry.getDay();
+        month = entry.getMonth()-1;
+        year = entry.getYear();
+        dateSelected = true;
     }
 
     private void saveEntry() {
@@ -172,4 +181,39 @@ public class EditEntryActivity extends AppCompatActivity implements View.OnClick
     private String progressToPrize( int progress ) {
         return  Round.roundToString( ((double) progress * 2.0) / 10000.0 );
     }
+
+    @Override
+    public boolean onCreateOptionsMenu( Menu menu ) {
+        MenuInflater inflater = getMenuInflater();
+        if( entryId > -1 )
+            inflater.inflate( R.menu.delete_menu, menu );
+        return true;
+    }
+
+    @Override
+    public void delete() {
+        onBackPressed();
+        entryDBHelper.delete( entryId );
+    }
+
+    @Override
+    public boolean onOptionsItemSelected( MenuItem item ) {
+        switch ( item.getItemId() ) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            case R.id.action_delete:
+                showDialog();
+                return true;
+            default:
+                return super.onOptionsItemSelected( item );
+        }
+    }
+
+    private void showDialog() {
+        DeleteDialogFragment fragment = new DeleteDialogFragment();
+        fragment.show( getSupportFragmentManager(), "" );
+    }
+
+
 }
